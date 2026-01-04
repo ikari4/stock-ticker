@@ -6,6 +6,21 @@ body {
     color: white;
 }
 
+button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;   
+    border-radius: 6px;  
+    padding: 0;         
+    cursor: pointer;
+    display: flex;
+    font-size: 20px;
+    width: 80px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
 #outerDiv {
     display: flex;
     flex-direction: column;
@@ -27,11 +42,6 @@ body {
     font-size: 20px;
 }
 
-button {
-    width: 80px;
-    font-size: 20px;
-}
-
 .circle {
     height: 30px;
     width: 30px;
@@ -42,6 +52,30 @@ button {
 
 .open {
     background-color: green;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 16px;
+  table-layout: fixed; 
+  word-wrap: break-word;
+}
+
+table th {
+  color: white;
+  padding: 2px;
+  text-align: center;
+  font-size: 14px;
+}
+
+table td {
+  padding: 6px;
+  height: 32px;
+  text-align: center;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
 

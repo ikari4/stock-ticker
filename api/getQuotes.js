@@ -2,7 +2,7 @@
 
 export default async function handler(req, res) {
     const { symbols } = req.body;
-console.log("symbols: ", symbols);
+
     if (!Array.isArray(symbols)) {
         return res.status(400).json({ error: "symbols must be an array" });
     }
