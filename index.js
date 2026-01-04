@@ -3,6 +3,7 @@
 function initPage(symbols) {
     isMarketOpen();
     getQuotes(symbols);
+    marketNews();
 }
 
 async function isMarketOpen() {
@@ -67,6 +68,44 @@ function buildTable(quotes) {
     table.appendChild(tbody);
     tableDiv.appendChild(table);
 }
+
+async function marketNews() {
+    const marketNewsRes = await fetch ("/api/marketNews");
+    const marketNews = await marketNewsRes.json();
+    postNews(marketNews);
+}
+
+function postNews(newsToPost) {
+
+    newsDiv.innerHTML = "";
+
+    newsToPost
+        .filter(article => article.source === "CNBC")
+        .slice(0, 10)
+        .forEach(article => {
+            const card = document.createElement("div");
+            card.className = "news-card";
+
+            if (article.image) {
+                const img = document.createElement("img");
+                img.src = article.image;
+                img.alt = article.headline;
+                img.className = "news-image";
+                card.appendChild(img);
+            }
+
+            const headline = document.createElement("a");
+            headline.href = article.url;
+            headline.target = "_blank";
+            headline.rel = "noopener noreferrer";
+            headline.textContent = article.headline;
+            headline.className = "news-headline";
+            card.appendChild(headline);
+
+            newsDiv.appendChild(card);
+    });
+}
+
 
 const searchBar = document.getElementById("searchBar");
 const searchBtn = document.getElementById("searchBtn");

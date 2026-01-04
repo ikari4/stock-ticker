@@ -78,4 +78,17 @@ table td {
   font-size: 14px;
 }
 
+.news-card {
+    display: flex;
+    gap: 12px 24px;
+    height: 90px;
+    align-items: flex-start;
+}
+
+.news-image {
+    width: 90px;
+    height: 60px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
 
