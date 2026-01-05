@@ -92,3 +92,14 @@ table td {
     flex-shrink: 0;
 }
 
+.symbol-link {
+    color: #0a58ca;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.symbol-link:hover {
+    text-decoration: none;
+}
+
+

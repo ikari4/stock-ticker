@@ -47,7 +47,17 @@ function buildTable(quotes) {
         const tr = document.createElement("tr");
 
         const symbolTd = document.createElement("td");
-        symbolTd.textContent = q.symbol;
+        const symbolLink = document.createElement("a");
+        symbolLink.href = "#";
+        symbolLink.textContent = q.symbol;
+        symbolLink.className = "symbol-link";
+
+        symbolLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            companyNews(q.symbol);
+        });
+
+        symbolTd.appendChild(symbolLink);
         tr.appendChild(symbolTd);
 
         const priceTd = document.createElement("td");
@@ -80,7 +90,7 @@ function postNews(newsToPost) {
     newsDiv.innerHTML = "";
 
     newsToPost
-        .filter(article => article.source === "CNBC")
+        // .filter(article => article.source === "CNBC")
         .slice(0, 10)
         .forEach(article => {
             const card = document.createElement("div");
@@ -104,6 +114,16 @@ function postNews(newsToPost) {
 
             newsDiv.appendChild(card);
     });
+}
+
+async function companyNews(symbol) {
+    const companyNewsRes = await fetch ("/api/companyNews", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ symbol })
+    });
+    const companyNews = await companyNewsRes.json();
+    postNews(companyNews);
 }
 
 
