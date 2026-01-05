@@ -24,6 +24,7 @@ async function getQuotes(symbols) {
     })
     const quotes = await quoteRes.json();
     searchBtn.disabled = false;
+    refreshBtn.disabled = false;
     buildTable(quotes);
 }
 
@@ -90,7 +91,6 @@ function postNews(newsToPost) {
     newsDiv.innerHTML = "";
 
     newsToPost
-        // .filter(article => article.source === "CNBC")
         .slice(0, 10)
         .forEach(article => {
             const card = document.createElement("div");
@@ -126,7 +126,19 @@ async function companyNews(symbol) {
     postNews(companyNews);
 }
 
+async function lookup(lookupTerm) {
+    const lookupRes = await fetch ("/api/lookup", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ lookupTerm })
+    });
+    const lookupReturn = await lookupRes.json();
+    console.log("lookupReturn: ", lookupReturn);
+}
 
+const lookupBar = document.getElementById("lookupBar");
+const lookupBtn = document.getElementById("lookupBtn");
+const refreshBtn = document.getElementById("refreshBtn");
 const searchBar = document.getElementById("searchBar");
 const searchBtn = document.getElementById("searchBtn");
 const stopLight = document.getElementById("stopLight");
@@ -134,6 +146,8 @@ const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 
 const symbols = [
+    "DOW",
+    "NDAQ",
     "HAE",
     "NVDA",
     "GOOGL",
@@ -143,6 +157,29 @@ const symbols = [
 ];
 
 initPage(symbols);
+
+
+// eventListener for search for symbol
+lookupBtn.addEventListener("click", async () => {
+    lookupBtn.disabled = true;
+    const lookupTerm = lookupBar.value.trim().toUpperCase();
+    if (!lookupTerm) return;
+    lookupBar.value = "";
+    lookup(lookupTerm);
+});
+
+lookupBar.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        lookupBtn.click();
+    }
+});
+
+// eventListener for search for symbol
+refreshBtn.addEventListener("click", async () => {
+    refreshBtn.disabled = true;
+    tableDiv.innerHTML = "";
+    initPage(symbols);
+});
 
 // eventListener for search for symbol
 searchBtn.addEventListener("click", async () => {

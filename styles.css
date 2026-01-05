@@ -28,7 +28,25 @@ button {
     justify-content: center;
 }
 
-#bannerDiv {
+#lookupDiv {
+    display: flex;
+    flex-direction: row;
+    height: 60px;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+#lookupBar {
+    max-width: 230px;
+    font-size: 20px;
+}
+
+#refreshBtn {
+    width: 30px;
+}
+
+#searchDiv {
     display: flex;
     flex-direction: row;
     height: 60px;
@@ -92,8 +110,12 @@ table td {
     flex-shrink: 0;
 }
 
+.news-headline {
+    color: white;
+}
+
 .symbol-link {
-    color: #0a58ca;
+    color: white;
     cursor: pointer;
     text-decoration: underline;
 }
