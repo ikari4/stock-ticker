@@ -24,7 +24,6 @@ async function getQuotes(symbols) {
     })
     const quotes = await quoteRes.json();
     addBtn.disabled = false;
-    refreshBtn.disabled = false;
     buildTable(quotes);
 }
 
@@ -143,7 +142,7 @@ async function symbolCheck(addTerm) {
             validate: true 
         })
     });
-    console.log("checkRes.ok: ", checkRes.ok);
+
     if (!checkRes.ok) {
         // add new function here to call lookup.js
         console.log("no symbol found");
@@ -153,11 +152,9 @@ async function symbolCheck(addTerm) {
     
     addBtn.disabled = false;
     symbols.unshift(addTerm);
-    console.log(symbols);
     getQuotes(symbols);    
 }
 
-const refreshBtn = document.getElementById("refreshBtn");
 const addBar = document.getElementById("addBar");
 const addBtn = document.getElementById("addBtn");
 const stopLight = document.getElementById("stopLight");
@@ -226,19 +223,13 @@ const symbols = [
 
 initPage(symbols);
 
-// eventListener for refresh
-refreshBtn.addEventListener("click", async () => {
-    refreshBtn.disabled = true;
-    tableDiv.innerHTML = "";
-    initPage(symbols);
-});
-
 // eventListener for add a symbol
 addBtn.addEventListener("click", async () => {    
     const addTerm = addBar.value.trim().toUpperCase();
-    console.log(addTerm, symbols); 
-    if (!addTerm || symbols.includes(addTerm)) return; 
-    console.log("call symbolCheck");
+
+    if (!addTerm || symbols.includes(addTerm)) {
+        initPage(symbols);
+    }; 
     symbolCheck(addTerm); 
 });
 
