@@ -23,7 +23,7 @@ async function getQuotes(symbols) {
         body: JSON.stringify({ symbols })
     })
     const quotes = await quoteRes.json();
-    searchBtn.disabled = false;
+    addBtn.disabled = false;
     refreshBtn.disabled = false;
     buildTable(quotes);
 }
@@ -62,11 +62,17 @@ function buildTable(quotes) {
         tr.appendChild(symbolTd);
 
         const priceTd = document.createElement("td");
+        console.log("q.c: ", q, q.c);
         priceTd.textContent = q.c.toFixed(2);
         tr.appendChild(priceTd);
 
         const deltaTd = document.createElement("td");
         deltaTd.textContent = q.d.toFixed(2);
+        if (Number(deltaTd.textContent) > 0) {
+            tr.className = "marketUp";
+        } else if (Number(deltaTd.textContent < 0)) {
+            tr.className = "marketDown";
+        };
         tr.appendChild(deltaTd);
 
         const percentTd = document.createElement("td");
@@ -126,75 +132,118 @@ async function companyNews(symbol) {
     postNews(companyNews);
 }
 
-async function lookup(lookupTerm) {
-    const lookupRes = await fetch ("/api/lookup", {
+async function symbolCheck(addTerm) {
+    addBtn.disabled = true;
+    addBar.value = "";
+    const checkRes = await fetch ("/api/getQuotes", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ lookupTerm })
+        body: JSON.stringify({ 
+            symbols: [addTerm],
+            validate: true 
+        })
     });
-    const lookupReturn = await lookupRes.json();
-    console.log("lookupReturn: ", lookupReturn);
+    console.log("checkRes.ok: ", checkRes.ok);
+    if (!checkRes.ok) {
+        // add new function here to call lookup.js
+        console.log("no symbol found");
+        addBtn.disabled = false;
+        return;
+    } 
+    
+    addBtn.disabled = false;
+    symbols.unshift(addTerm);
+    console.log(symbols);
+    getQuotes(symbols);    
 }
 
-const lookupBar = document.getElementById("lookupBar");
-const lookupBtn = document.getElementById("lookupBtn");
 const refreshBtn = document.getElementById("refreshBtn");
-const searchBar = document.getElementById("searchBar");
-const searchBtn = document.getElementById("searchBtn");
+const addBar = document.getElementById("addBar");
+const addBtn = document.getElementById("addBtn");
 const stopLight = document.getElementById("stopLight");
 const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 
 const symbols = [
-    "DOW",
-    "NDAQ",
-    "HAE",
+    "ITOT",
     "NVDA",
     "GOOGL",
+    "EZU",
+    "EWJ",
+    "WMT",
+    "VWO",
     "AMZN",
+    "MSFT",
+    "AAPL",
+    "ABBV",
+    "MTB",
+    "VGK",
+    "QAI",
+    "ASML",
+    "IWS",
+    "TMO",
+    "BLK",
+    "ARGX",
+    "QCOM",
+    "TT",
+    "NEE",
+    "IWP",
+    "MLM",
+    "RDDT",
+    "RF",
+    "UBER",
+    "HAE",
+    "ALL",
+    "XOM",
+    "TOTL",
+    "IJR",
     "UNH",
-    "MSFT"
+    "ROK",
+    "ETN",
+    "KNX",
+    "KO",
+    "PANW",
+    "LOW",
+    "TMUS",
+    "SLB",
+    "INDA",
+    "USFD",
+    "VZ",
+    "SNDR",
+    "WSC",
+    "MA",
+    "TGT",
+    "COST",
+    "ADI",
+    "BND",
+    "HUBS",
+    "ICF",
+    "SBAC",
+    "EOG",
+    "PG",
+    "CI"
 ];
 
 initPage(symbols);
 
-
-// eventListener for search for symbol
-lookupBtn.addEventListener("click", async () => {
-    lookupBtn.disabled = true;
-    const lookupTerm = lookupBar.value.trim().toUpperCase();
-    if (!lookupTerm) return;
-    lookupBar.value = "";
-    lookup(lookupTerm);
-});
-
-lookupBar.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        lookupBtn.click();
-    }
-});
-
-// eventListener for search for symbol
+// eventListener for refresh
 refreshBtn.addEventListener("click", async () => {
     refreshBtn.disabled = true;
     tableDiv.innerHTML = "";
     initPage(symbols);
 });
 
-// eventListener for search for symbol
-searchBtn.addEventListener("click", async () => {
-    searchBtn.disabled = true;
-    const searchTerm = searchBar.value.trim().toUpperCase();
-    if (!searchTerm) return;
-    if (!symbols.includes(searchTerm)) {
-        symbols.push(searchTerm);
-    }
-    searchBar.value = "";
-    getQuotes(symbols);
+// eventListener for add a symbol
+addBtn.addEventListener("click", async () => {    
+    const addTerm = addBar.value.trim().toUpperCase();
+    console.log(addTerm, symbols); 
+    if (!addTerm || symbols.includes(addTerm)) return; 
+    console.log("call symbolCheck");
+    symbolCheck(addTerm); 
 });
 
-searchBar.addEventListener("keydown", (e) => {
+addBar.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        searchBtn.click();
+        addBtn.click();
     }
 });
