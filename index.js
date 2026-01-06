@@ -17,13 +17,13 @@ async function isMarketOpen() {
 }
 
 async function getQuotes(symbols) {
+        disableFor(addBtn, 90);
     const quoteRes = await fetch ("/api/getQuotes", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ symbols })
     })
     const quotes = await quoteRes.json();
-    addBtn.disabled = false;
     buildTable(quotes);
 }
 
@@ -61,7 +61,6 @@ function buildTable(quotes) {
         tr.appendChild(symbolTd);
 
         const priceTd = document.createElement("td");
-        console.log("q.c: ", q, q.c);
         priceTd.textContent = q.c.toFixed(2);
         tr.appendChild(priceTd);
 
@@ -132,7 +131,6 @@ async function companyNews(symbol) {
 }
 
 async function symbolCheck(addTerm) {
-    addBtn.disabled = true;
     addBar.value = "";
     const checkRes = await fetch ("/api/getQuotes", {
         method: "POST",
@@ -145,14 +143,30 @@ async function symbolCheck(addTerm) {
 
     if (!checkRes.ok) {
         // add new function here to call lookup.js
-        console.log("no symbol found");
-        addBtn.disabled = false;
         return;
     } 
     
-    addBtn.disabled = false;
     symbols.unshift(addTerm);
     getQuotes(symbols);    
+}
+
+function disableFor(button, seconds) {
+    const originalText = button.textContent;
+    let remaining = seconds;
+
+    button.disabled = true;
+    button.textContent = `Wait ${remaining}s`;
+
+    const interval = setInterval(() => {
+        remaining--;
+        button.textContent = `Wait ${remaining}s`;
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    }, 1000);
 }
 
 const addBar = document.getElementById("addBar");
