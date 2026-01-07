@@ -55,6 +55,7 @@ function buildTable(quotes) {
         symbolLink.addEventListener("click", (e) => {
             e.preventDefault();
             companyNews(q.symbol);
+            companyInfo(q.symbol);
         });
 
         symbolTd.appendChild(symbolLink);
@@ -120,6 +121,53 @@ function postNews(newsToPost) {
     });
 }
 
+function postInfo(companyInfo) {
+    infoDiv.innerHTML = "";
+
+    if (
+        !companyInfo ||
+        Object.keys(companyInfo).length === 0 ||
+        !companyInfo.name
+    ) {
+        const fallback = document.createElement("div");
+        fallback.className = "company-fallback";
+        fallback.textContent = "No company profile available (ETF or index).";
+        infoDiv.appendChild(fallback);
+        return;
+    }
+
+    const header = document.createElement("div");
+    header.className = "company-header";
+
+    if (companyInfo.logo) {
+        const logo = document.createElement("img");
+        logo.src = companyInfo.logo;
+        logo.alt = companyInfo.name;
+        logo.className = "company-logo";
+        header.appendChild(logo);
+    }
+
+    const nameLink = document.createElement("a");
+    nameLink.href = companyInfo.weburl;
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.textContent = companyInfo.name;
+    nameLink.className = "company-name";
+
+    header.appendChild(nameLink);
+
+    if (companyInfo.finnhubIndustry) {
+        const industry = document.createElement("div");
+        industry.textContent = companyInfo.finnhubIndustry;
+        industry.className = "company-industry";
+        infoDiv.appendChild(header);
+        infoDiv.appendChild(industry);
+    } else {
+        infoDiv.appendChild(header);
+    }
+}
+
+
 async function companyNews(symbol) {
     const companyNewsRes = await fetch ("/api/companyNews", {
         method: "POST",
@@ -128,6 +176,16 @@ async function companyNews(symbol) {
     });
     const companyNews = await companyNewsRes.json();
     postNews(companyNews);
+}
+
+async function companyInfo(symbol) {
+    const companyInfoRes = await fetch ("/api/companyInfo", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ symbol })
+    });
+    const companyInfo = await companyInfoRes.json();
+    postInfo(companyInfo);
 }
 
 async function symbolCheck(addTerm) {
@@ -172,6 +230,7 @@ function disableFor(button, seconds) {
 const addBar = document.getElementById("addBar");
 const addBtn = document.getElementById("addBtn");
 const stopLight = document.getElementById("stopLight");
+const infoDiv = document.getElementById("infoDiv");
 const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 

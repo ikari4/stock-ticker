@@ -114,4 +114,38 @@ table td {
     text-decoration: none;
 }
 
+.company-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.company-logo {
+    height: 32px;
+    width: auto;
+}
+
+.company-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.company-name:hover {
+    text-decoration: underline;
+}
+
+.company-industry {
+    margin-top: 4px;
+    margin-left: 43px;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.company-fallback {
+    font-style: italic;
+    color: #777;
+    padding: 8px 0;
+}
 
