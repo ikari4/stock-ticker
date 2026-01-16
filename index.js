@@ -17,7 +17,7 @@ async function isMarketOpen() {
 }
 
 async function getQuotes(symbols) {
-        disableFor(addBtn, 90);
+    disableFor(addBtn, 90);
     const quoteRes = await fetch ("/api/getQuotes", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -32,7 +32,7 @@ function buildTable(quotes) {
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
-    const headers = ["Symbol", "$", "Δ", "%Δ"];
+    const headers = ["Name", "$", "%Δ"];
     headers.forEach(text => {
         const th = document.createElement("th");
         th.textContent = text;
@@ -49,13 +49,13 @@ function buildTable(quotes) {
         const symbolTd = document.createElement("td");
         const symbolLink = document.createElement("a");
         symbolLink.href = "#";
-        symbolLink.textContent = q.symbol;
+        symbolLink.textContent = q.name;
         symbolLink.className = "symbol-link";
 
         symbolLink.addEventListener("click", (e) => {
             e.preventDefault();
             companyNews(q.symbol);
-            companyInfo(q.symbol);
+            companyInfo(q.symbol, quotes);
         });
 
         symbolTd.appendChild(symbolLink);
@@ -65,17 +65,15 @@ function buildTable(quotes) {
         priceTd.textContent = q.c.toFixed(2);
         tr.appendChild(priceTd);
 
-        const deltaTd = document.createElement("td");
-        deltaTd.textContent = q.d.toFixed(2);
-        if (Number(deltaTd.textContent) > 0) {
-            tr.className = "marketUp";
-        } else if (Number(deltaTd.textContent < 0)) {
-            tr.className = "marketDown";
-        };
-        tr.appendChild(deltaTd);
-
         const percentTd = document.createElement("td");
         percentTd.textContent = q.dp.toFixed(2) + "%";
+
+        if (Number(q.dp) > 0) {
+            tr.className = "marketUp";
+        } else if (Number(q.dp) < 0) {
+            tr.className = "marketDown";
+        };
+
         tr.appendChild(percentTd);
 
         tbody.appendChild(tr);
@@ -167,7 +165,6 @@ function postInfo(companyInfo) {
     }
 }
 
-
 async function companyNews(symbol) {
     const companyNewsRes = await fetch ("/api/companyNews", {
         method: "POST",
@@ -178,13 +175,33 @@ async function companyNews(symbol) {
     postNews(companyNews);
 }
 
-async function companyInfo(symbol) {
+async function companyInfo(symbol, quotes) {
     const companyInfoRes = await fetch ("/api/companyInfo", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ symbol })
     });
-    const companyInfo = await companyInfoRes.json();
+
+    let companyInfo = await companyInfoRes.json();
+    if (!companyInfo || !companyInfo.name) {
+        const fallback = quotes.find(q => q.symbol === symbol);
+        if (fallback) {
+            companyInfo = {
+                name: fallback.name || symbol, // fallback to symbol if name missing
+                weburl: fallback.url || null,
+                logo: fallback.logo || null,
+                finnhubIndustry: fallback.finnhubIndustry || null,
+                country: fallback.country || null,
+                currency: fallback.currency || null,
+                estimateCurrency: fallback.estimateCurrency || null,
+                exchange: fallback.exchange || null,
+                ipo: fallback.ipo || null,
+                marketCapitalization: fallback.marketCapitalization || null,
+                phone: fallback.phone || null,
+                shareOutstanding: fallback.shareOutstanding || null
+            };
+        }
+    }
     postInfo(companyInfo);
 }
 
@@ -235,64 +252,64 @@ const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 
 const symbols = [
-    "ITOT",
-    "NVDA",
-    "GOOGL",
-    "EZU",
-    "EWJ",
-    "WMT",
-    "VWO",
-    "AMZN",
-    "MSFT",
-    "AAPL",
-    "ABBV",
-    "MTB",
-    "VGK",
-    "QAI",
-    "ASML",
-    "IWS",
-    "TMO",
-    "BLK",
-    "ARGX",
-    "QCOM",
-    "TT",
-    "NEE",
-    "IWP",
-    "MLM",
-    "RDDT",
-    "RF",
-    "UBER",
-    "HAE",
-    "ALL",
-    "XOM",
-    "TOTL",
-    "IJR",
-    "UNH",
-    "ROK",
-    "ETN",
-    "KNX",
-    "KO",
-    "PANW",
-    "LOW",
-    "TMUS",
-    "SLB",
-    "INDA",
-    "USFD",
-    "VZ",
-    "SNDR",
-    "WSC",
-    "MA",
-    "TGT",
-    "COST",
-    "ADI",
-    "BND",
-    "HUBS",
-    "ICF",
-    "SBAC",
-    "EOG",
-    "PG",
-    "CI"
-];
+        {"symbol": "ITOT", "name": "iShares Core S&P Total US Stock Market ETF", "url": "https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf"},
+        {"symbol": "NVDA", "name": "NVIDIA"},
+        {"symbol": "GOOGL", "name": "Alphabet"},
+        {"symbol": "EZU", "name": "iShares MSCI Eurozone ETF", "url": "https://www.ishares.com/us/products/239644/ishares-msci-emu-etf"},
+        {"symbol": "EWJ","name": "iShares MSCI Japan ETF", "url": "https://www.ishares.com/us/products/239665/ishares-msci-japan-etf"},
+        {"symbol": "WMT","name": "Walmart"},
+        {"symbol": "VWO","name": "Vanguard Emerging Markets Stock Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/vwo"},
+        {"symbol": "AMZN","name": "Amazon"},
+        {"symbol": "MSFT","name": "Microsoft"},
+        {"symbol": "AAPL","name": "Apple"},
+        {"symbol": "ABBV","name": "AbbVie"},
+        {"symbol": "MTB","name": "M&T Bank"},
+        {"symbol": "VGK", "name": "Vanguard European Stock Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/vgk"},
+        {"symbol": "QAI", "name": "NYLI Hedge Multi-Strategy Tracker ETF", "url": "https://www.newyorklifeinvestments.com/etf/nyli-hedge-multi-strategy-tracker-etf-qai?ticker=QAI"},
+        {"symbol": "ASML","name": "ASML Holding NV"},
+        {"symbol": "IWS", "name": "iShares Russell Mid-Cap Value ETF", "url": "https://www.ishares.com/us/products/239719/ishares-russell-midcap-value-etf"},
+        {"symbol": "TMO","name": "Thermo Fisher Scientific"},
+        {"symbol": "BLK","name": "Blackrock"},
+        {"symbol": "ARGX","name": "argenx SE"},
+        {"symbol": "QCOM","name": "Qualcomm"},
+        {"symbol": "TT","name": "Trane Technologies"},
+        {"symbol": "NEE","name": "Nextera Engery"},
+        {"symbol": "IWP", "name": "iShares Russell Mid-Cap Growth ETF", "url": "https://www.ishares.com/us/products/239717/ishares-russell-midcap-growth-etf"},
+        {"symbol": "MLM","name": "Martin Marietta Materials"},
+        {"symbol": "RDDT","name": "Reddit"},
+        {"symbol": "RF","name": "Regions Financial"},
+        {"symbol": "UBER","name": "Uber Technologies"},
+        {"symbol": "HAE","name": "Haemonetics"},
+        {"symbol": "ALL","name": "Allstate"},
+        {"symbol": "XOM","name": "Exxon Mobil"},
+        {"symbol": "TOTL", "name": "State Street SPDR DoubleLine Tot Rtn Tctl ETF", "url": "https://www.ssga.com/us/en/individual/etfs/state-street-doubleline-total-return-tactical-etf-totl"},
+        {"symbol": "IJR", "name": "iShares Core S&P Small-Cap ETF", "url": "https://www.ishares.com/us/products/239774/ishares-core-sp-smallcap-etf"},
+        {"symbol": "UNH","name": "United Health Group"},
+        {"symbol": "ROK","name": "Rockwell Automation"},
+        {"symbol": "ETN","name": "Eaton Corporation"},
+        {"symbol": "KNX","name": "Knight-Swift Transportation Holdings"},
+        {"symbol": "KO","name": "Coca-Cola"},
+        {"symbol": "PANW","name": "Palo Alto Networks"},
+        {"symbol": "LOW","name": "Lowes Companies"},
+        {"symbol": "TMUS","name": "T-Mobile US"},
+        {"symbol": "SLB","name": "Slb NV"},
+        {"symbol": "INDA", "name": "iShares MSCI India ETF", "url": "https://www.ishares.com/us/products/239659/ishares-msci-india-etf"},
+        {"symbol": "USFD","name": "US Foods Holding"},
+        {"symbol": "VZ","name": "Verizon Communications"},
+        {"symbol": "SNDR","name": "Schneider National"},
+        {"symbol": "WSC","name": "WillScot Holdings"},
+        {"symbol": "MA","name": "Mastercard"},
+        {"symbol": "TGT","name": "Target"},
+        {"symbol": "COST","name": "CostCo Wholesale"},
+        {"symbol": "ADI","name": "Analog Devices"},
+        {"symbol": "BND", "name": "Vanguard Total Bond Market Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/bnd"},
+        {"symbol": "HUBS","name": "Hubspot"},
+        {"symbol": "ICF", "name": "iShares Select US REIT ETF", "url": "https://www.ishares.com/us/products/239482/ishares-cohen-steers-reit-etf"},
+        {"symbol": "SBAC","name": "SBA Communications"},
+        {"symbol": "EOG","name": "EOG Resources"},
+        {"symbol": "PG","name": "Proctor & Gamble"},
+        {"symbol": "CI","name": "Cigna Group"}
+    ];
 
 initPage(symbols);
 

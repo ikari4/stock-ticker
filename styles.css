@@ -78,6 +78,22 @@ table td {
   font-size: 14px;
 }
 
+table th:first-child,
+table td:first-child {
+    width: 60%;
+    text-align: left;
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+    width: 20%;
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+    width: 20%;
+}
+
 .marketUp {
     color: green;
 }
