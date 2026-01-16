@@ -9,7 +9,12 @@ export default async function handler(req, res) {
 
     try {
         const results = await Promise.all(
-            symbols.map(async (symbol) => {
+            symbols.map(async (item) => {
+                const symbol = typeof item === "string" ? item : item.symbol;
+                if (!symbol) {
+                    return { isValid: false };
+                }
+
                 const url =
                     `https://finnhub.io/api/v1/quote?symbol=${symbol}` +
                     `&token=${process.env.API_KEY}`;
@@ -22,7 +27,14 @@ export default async function handler(req, res) {
                 return {
                     symbol,
                     isValid,
-                    data: isValid ? { symbol, ...data } : null
+                    data: isValid ? { symbol, ...data } : null,
+                    quote: isValid ? data : null,
+                    meta: typeof item === "object"
+                        ? {
+                            name: item.name ?? null,
+                            url: item.url ?? null
+                        }
+                        : null
                 };
             })
         );
@@ -40,7 +52,11 @@ export default async function handler(req, res) {
         // 🟢 Normal mode (used by getQuotes)
         const quotes = results
             .filter(r => r.isValid)
-            .map(r => r.data);
+            .map(r => ({
+                symbol: r.symbol,
+                ...r.quote,
+                ...(r.meta ?? {})
+            }));
 
         res.status(200).json(quotes);
 
