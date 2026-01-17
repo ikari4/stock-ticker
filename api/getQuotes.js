@@ -1,7 +1,7 @@
 // /api/getQuotes.js
 
 export default async function handler(req, res) {
-    const { symbols, validate = false } = req.body;
+    const { symbols } = req.body;
 
     if (!Array.isArray(symbols) || symbols.length === 0) {
         return res.status(400).json({ error: "symbols must be a non-empty array" });
@@ -39,17 +39,6 @@ export default async function handler(req, res) {
             })
         );
 
-        // 🔴 Validation mode (used by symbolCheck)
-        if (validate) {
-            const invalid = results.find(r => !r.isValid);
-            if (invalid) {
-                return res.status(404).json({
-                    error: `Symbol not found: ${invalid.symbol}`
-                });
-            }
-        }
-
-        // 🟢 Normal mode (used by getQuotes)
         const quotes = results
             .filter(r => r.isValid)
             .map(r => ({

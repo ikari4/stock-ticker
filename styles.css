@@ -28,18 +28,12 @@ button {
     justify-content: center;
 }
 
-#addDiv {
+#headerDiv {
     display: flex;
     flex-direction: row;
     height: 60px;
-    justify-content: space-around;
-    align-items: center;
-    gap: 10px;
-}
-
-#addBar {
-    max-width: 180px;
-    font-size: 20px;
+    align-self: flex-start;
+    gap: 40px;
 }
 
 .circle {
@@ -48,6 +42,7 @@ button {
     border-radius: 50%;
     background-color: red;
     display: inline-block;
+    flex-shrink: 0;
 }
 
 .open {

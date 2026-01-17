@@ -17,7 +17,6 @@ async function isMarketOpen() {
 }
 
 async function getQuotes(symbols) {
-    disableFor(addBtn, 90);
     const quoteRes = await fetch ("/api/getQuotes", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -205,49 +204,9 @@ async function companyInfo(symbol, quotes) {
     postInfo(companyInfo);
 }
 
-async function symbolCheck(addTerm) {
-    addBar.value = "";
-    const checkRes = await fetch ("/api/getQuotes", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ 
-            symbols: [addTerm],
-            validate: true 
-        })
-    });
-
-    if (!checkRes.ok) {
-        // add new function here to call lookup.js
-        return;
-    } 
-    
-    symbols.unshift(addTerm);
-    getQuotes(symbols);    
-}
-
-function disableFor(button, seconds) {
-    const originalText = button.textContent;
-    let remaining = seconds;
-
-    button.disabled = true;
-    button.textContent = `Wait ${remaining}s`;
-
-    const interval = setInterval(() => {
-        remaining--;
-        button.textContent = `Wait ${remaining}s`;
-
-        if (remaining <= 0) {
-            clearInterval(interval);
-            button.disabled = false;
-            button.textContent = originalText;
-        }
-    }, 1000);
-}
-
-const addBar = document.getElementById("addBar");
-const addBtn = document.getElementById("addBtn");
 const stopLight = document.getElementById("stopLight");
 const infoDiv = document.getElementById("infoDiv");
+const socketDiv = document.getElementById("socketDiv");
 const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 
@@ -313,18 +272,3 @@ const symbols = [
 
 initPage(symbols);
 
-// eventListener for add a symbol
-addBtn.addEventListener("click", async () => {    
-    const addTerm = addBar.value.trim().toUpperCase();
-
-    if (!addTerm || symbols.includes(addTerm)) {
-        initPage(symbols);
-    }; 
-    symbolCheck(addTerm); 
-});
-
-addBar.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        addBtn.click();
-    }
-});
