@@ -235,7 +235,11 @@ function realTimeTrades(symbol) {
                 const price = trade.p.toFixed(2);
                 const volume = trade.v;
 
-            socketDiv.textContent = `${sym}   $${price}   Vol: ${volume}`;
+                socketDiv.innerHTML = `
+                    <span class="trade-symbol">${sym}</span>
+                    <span class="trade-price">$${price}</span>
+                    <span class="trade-volume">Vol: ${volume}</span>
+                `;
                 console.log("LIVE TRADE: ", trade);
             }
         };

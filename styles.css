@@ -31,7 +31,6 @@ button {
 #headerDiv {
     display: flex;
     flex-direction: row;
-    height: 60px;
     align-self: flex-start;
     gap: 40px;
 }
@@ -53,7 +52,6 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
-  font-size: 22px;
   table-layout: fixed; 
   word-wrap: break-word;
 }
@@ -62,7 +60,7 @@ table th {
   color: white;
   padding: 2px;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 table td {
@@ -70,7 +68,7 @@ table td {
   height: 32px;
   text-align: center;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 table th:first-child,
@@ -148,7 +146,6 @@ table td:nth-child(3) {
 
 .company-industry {
     margin-top: 4px;
-    margin-left: 43px;
     margin-bottom: 8px;
     color: #666;
     font-size: 0.9rem;
@@ -161,10 +158,9 @@ table td:nth-child(3) {
 }
 
 #socketDiv {
-  font-family: monospace;
-  margin-top: 10px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
+  display: flex;
+  gap: 30px;
   background: #111;
   color: #0f0;
+  align-items: center;
 }
