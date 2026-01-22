@@ -1,5 +1,9 @@
 // index.js
 
+let tradeSocket = null;
+let currentTradeSymbol = null;
+const socketKey = "d5ajr5pr01qh7ajhdrr0d5ajr5pr01qh7ajhdrrg";
+
 function initPage(symbols) {
     isMarketOpen();
     getQuotes(symbols);
@@ -55,6 +59,7 @@ function buildTable(quotes) {
             e.preventDefault();
             companyNews(q.symbol);
             companyInfo(q.symbol, quotes);
+            realTimeTrades(q.symbol);
         });
 
         symbolTd.appendChild(symbolLink);
@@ -202,6 +207,60 @@ async function companyInfo(symbol, quotes) {
         }
     }
     postInfo(companyInfo);
+}
+
+function realTimeTrades(symbol) {
+    if (!tradeSocket) {
+        tradeSocket = new WebSocket(
+            `wss://ws.finnhub.io?token=${socketKey}`
+        );
+        tradeSocket.onopen = () => {
+            console.log("WebSocket connected");
+            socketDiv.textContent = "Waiting for next trade";
+
+            tradeSocket.send(JSON.stringify({
+                type: "subscribe",
+                symbol: symbol
+            }));
+
+            currentTradeSymbol = symbol;
+        };
+
+        tradeSocket.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+
+            if (msg.type === "trade") {
+                const trade = msg.data[0];
+                const sym = trade.s;
+                const price = trade.p.toFixed(2);
+                const volume = trade.v;
+
+            socketDiv.textContent = `${sym}   $${price}   Vol: ${volume}`;
+                console.log("LIVE TRADE: ", trade);
+            }
+        };
+
+        tradeSocket.onerror = (err) => {
+            console.error("WebSocket error", err);
+        };
+
+        return;
+    }
+
+    if (currentTradeSymbol) {
+        tradeSocket.send(JSON.stringify({
+            type: "unsubscribe",
+            symbol: currentTradeSymbol
+        }));
+    }
+
+    tradeSocket.send(JSON.stringify({
+        type: "subscribe",
+        symbol: symbol
+    }));
+
+    currentTradeSymbol = symbol;
+    socketDiv.textContent = "Waiting for next trade";
 }
 
 const stopLight = document.getElementById("stopLight");
