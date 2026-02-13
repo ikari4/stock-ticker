@@ -8,8 +8,9 @@ export default async function handler(req, res) {
     try {
         const filePath = path.join(process.cwd(), './src/data.txt');
         const fileContents = await fs.readFile(filePath, 'utf8');
+        const parsed = JSON.parse(fileContents);
 
-        res.status(200).json(fileContents);
+        res.status(200).json(parsed);
         
     } catch (err) {
         console.error(err);

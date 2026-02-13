@@ -4,17 +4,10 @@ let tradeSocket = null;
 let currentTradeSymbol = null;
 const socketKey = "d5ajr5pr01qh7ajhdrr0d5ajr5pr01qh7ajhdrrg";
 
-function initPage(symbols) {
+function initPage() {
     isMarketOpen();
-    getQuotes(symbols);
-    marketNews();
     loadFile();
-}
-
-async function loadFile() {
-    const fileRes = await fetch ("/api/loadFile");
-    const symbolFile = await fileRes.json();
-    console.log(symbolFile);
+    marketNews();
 }
 
 async function isMarketOpen() {
@@ -25,6 +18,12 @@ async function isMarketOpen() {
     } else {
         stopLight.classList.remove("open");
     }
+}
+
+async function loadFile() {
+    const fileRes = await fetch ("/api/loadFile");
+    const symbols = await fileRes.json();
+    getQuotes(symbols);
 }
 
 async function getQuotes(symbols) {
@@ -280,65 +279,5 @@ const socketDiv = document.getElementById("socketDiv");
 const tableDiv = document.getElementById("tableDiv");
 const newsDiv = document.getElementById("newsDiv");
 
-const symbols = [
-        {"symbol": "ITOT", "name": "iShares Core S&P Total US Stock Market ETF", "url": "https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf"},
-        {"symbol": "NVDA", "name": "NVIDIA"},
-        {"symbol": "GOOGL", "name": "Alphabet"},
-        {"symbol": "EZU", "name": "iShares MSCI Eurozone ETF", "url": "https://www.ishares.com/us/products/239644/ishares-msci-emu-etf"},
-        {"symbol": "EWJ","name": "iShares MSCI Japan ETF", "url": "https://www.ishares.com/us/products/239665/ishares-msci-japan-etf"},
-        {"symbol": "WMT","name": "Walmart"},
-        {"symbol": "VWO","name": "Vanguard Emerging Markets Stock Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/vwo"},
-        {"symbol": "AMZN","name": "Amazon"},
-        {"symbol": "MSFT","name": "Microsoft"},
-        {"symbol": "AAPL","name": "Apple"},
-        {"symbol": "ABBV","name": "AbbVie"},
-        {"symbol": "MTB","name": "M&T Bank"},
-        {"symbol": "VGK", "name": "Vanguard European Stock Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/vgk"},
-        {"symbol": "QAI", "name": "NYLI Hedge Multi-Strategy Tracker ETF", "url": "https://www.newyorklifeinvestments.com/etf/nyli-hedge-multi-strategy-tracker-etf-qai?ticker=QAI"},
-        {"symbol": "ASML","name": "ASML Holding NV"},
-        {"symbol": "IWS", "name": "iShares Russell Mid-Cap Value ETF", "url": "https://www.ishares.com/us/products/239719/ishares-russell-midcap-value-etf"},
-        {"symbol": "TMO","name": "Thermo Fisher Scientific"},
-        {"symbol": "BLK","name": "Blackrock"},
-        {"symbol": "ARGX","name": "argenx SE"},
-        {"symbol": "QCOM","name": "Qualcomm"},
-        {"symbol": "TT","name": "Trane Technologies"},
-        {"symbol": "NEE","name": "Nextera Engery"},
-        {"symbol": "IWP", "name": "iShares Russell Mid-Cap Growth ETF", "url": "https://www.ishares.com/us/products/239717/ishares-russell-midcap-growth-etf"},
-        {"symbol": "MLM","name": "Martin Marietta Materials"},
-        {"symbol": "RDDT","name": "Reddit"},
-        {"symbol": "RF","name": "Regions Financial"},
-        {"symbol": "UBER","name": "Uber Technologies"},
-        {"symbol": "HAE","name": "Haemonetics"},
-        {"symbol": "ALL","name": "Allstate"},
-        {"symbol": "XOM","name": "Exxon Mobil"},
-        {"symbol": "TOTL", "name": "State Street SPDR DoubleLine Tot Rtn Tctl ETF", "url": "https://www.ssga.com/us/en/individual/etfs/state-street-doubleline-total-return-tactical-etf-totl"},
-        {"symbol": "IJR", "name": "iShares Core S&P Small-Cap ETF", "url": "https://www.ishares.com/us/products/239774/ishares-core-sp-smallcap-etf"},
-        {"symbol": "UNH","name": "United Health Group"},
-        {"symbol": "ROK","name": "Rockwell Automation"},
-        {"symbol": "ETN","name": "Eaton Corporation"},
-        {"symbol": "KNX","name": "Knight-Swift Transportation Holdings"},
-        {"symbol": "KO","name": "Coca-Cola"},
-        {"symbol": "PANW","name": "Palo Alto Networks"},
-        {"symbol": "LOW","name": "Lowes Companies"},
-        {"symbol": "TMUS","name": "T-Mobile US"},
-        {"symbol": "SLB","name": "Slb NV"},
-        {"symbol": "INDA", "name": "iShares MSCI India ETF", "url": "https://www.ishares.com/us/products/239659/ishares-msci-india-etf"},
-        {"symbol": "USFD","name": "US Foods Holding"},
-        {"symbol": "VZ","name": "Verizon Communications"},
-        {"symbol": "SNDR","name": "Schneider National"},
-        {"symbol": "WSC","name": "WillScot Holdings"},
-        {"symbol": "MA","name": "Mastercard"},
-        {"symbol": "TGT","name": "Target"},
-        {"symbol": "COST","name": "CostCo Wholesale"},
-        {"symbol": "ADI","name": "Analog Devices"},
-        {"symbol": "BND", "name": "Vanguard Total Bond Market Index Fund ETF", "url": "https://investor.vanguard.com/investment-products/etfs/profile/bnd"},
-        {"symbol": "HUBS","name": "Hubspot"},
-        {"symbol": "ICF", "name": "iShares Select US REIT ETF", "url": "https://www.ishares.com/us/products/239482/ishares-cohen-steers-reit-etf"},
-        {"symbol": "SBAC","name": "SBA Communications"},
-        {"symbol": "EOG","name": "EOG Resources"},
-        {"symbol": "PG","name": "Proctor & Gamble"},
-        {"symbol": "CI","name": "Cigna Group"}
-    ];
-
-initPage(symbols);
+initPage();
 
