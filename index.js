@@ -8,6 +8,13 @@ function initPage(symbols) {
     isMarketOpen();
     getQuotes(symbols);
     marketNews();
+    loadFile();
+}
+
+async function loadFile() {
+    const fileRes = await fetch ("/api/loadFile");
+    const symbolFile = await fileRes.json();
+    console.log(symbolFile);
 }
 
 async function isMarketOpen() {
