@@ -50,7 +50,7 @@ function buildTable(quotes) {
 
     thead.appendChild(headerRow);
     table.appendChild(thead);
-
+    
     const tbody = document.createElement("tbody");
     quotes.forEach(q => {
         const tr = document.createElement("tr");
@@ -85,12 +85,23 @@ function buildTable(quotes) {
         };
 
         tr.appendChild(percentTd);
-
         tbody.appendChild(tr);
     });
 
     table.appendChild(tbody);
     tableDiv.appendChild(table);
+
+    const portfolioChange = document.createElement("div");
+    const upOrDown = weightedDp(quotes);
+    portfolioChange.innerHTML = "Portfolio Change: " + upOrDown.toFixed(2) + "%";
+    
+    if (Number(upOrDown) > 0) {
+        portfolioChange.className = "marketUp";
+    } else if (Number(upOrDown) < 0) {
+        portfolioChange.className = "marketDown";
+    };
+
+    socketDiv.appendChild(portfolioChange);
 }
 
 async function marketNews() {
@@ -272,6 +283,23 @@ function realTimeTrades(symbol) {
     currentTradeSymbol = symbol;
     socketDiv.textContent = "Waiting for next trade";
 }
+
+function weightedDp(data) {
+    // 1) total weight
+    const totalPercent = data.reduce((sum, row) => sum + row.percent, 0);
+
+    if (totalPercent === 0) return 0;
+
+    // 2) weighted sum
+    const weightedSum = data.reduce(
+        (sum, row) => sum + (row.dp * row.percent),
+        0
+    );
+
+    // 3) weighted average
+    return weightedSum / totalPercent;
+}
+
 
 const stopLight = document.getElementById("stopLight");
 const infoDiv = document.getElementById("infoDiv");

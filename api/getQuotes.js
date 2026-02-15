@@ -32,7 +32,8 @@ export default async function handler(req, res) {
                     meta: typeof item === "object"
                         ? {
                             name: item.name ?? null,
-                            url: item.url ?? null
+                            url: item.url ?? null,
+                            percent: item.percent
                         }
                         : null
                 };

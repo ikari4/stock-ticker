@@ -161,6 +161,5 @@ table td:nth-child(3) {
   display: flex;
   gap: 30px;
   background: #111;
-  color: #0f0;
   align-items: center;
 }

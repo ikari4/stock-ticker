@@ -6,7 +6,7 @@ import path from 'path';
 export default async function handler(req, res) {
 
     try {
-        const filePath = path.join(process.cwd(), './src/data.txt');
+        const filePath = path.join(process.cwd(), './src/data.json');
         const fileContents = await fs.readFile(filePath, 'utf8');
         const parsed = JSON.parse(fileContents);
 
